@@ -1,4 +1,4 @@
-## Time-stamp: <2013-01-24 21:38:38 vk>
+## Time-stamp: <2013-01-24 21:46:14 vk>
 ## -*- coding: utf-8 -*-
 ## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
 
@@ -12,23 +12,27 @@ out *everything* except:
 
 Please refer to the Features section below for details.
 
-My use case: I generate my iCalendar files with [[http://orgmode.org][Org-mode]] using its
-[[http://orgmode.org/manual/iCalendar-export.html][iCalendar-export]] for [[http://orgmode.org/worg/org-tutorials/org-google-sync.html][Google Calendar synchronization]].
 
 ** Why
 
+My use case: I generate my iCalendar files with [[http://orgmode.org][Org-mode]] using its
+[[http://orgmode.org/manual/iCalendar-export.html][iCalendar-export]] for [[http://orgmode.org/worg/org-tutorials/org-google-sync.html][Google Calendar synchronization]]. The filtered
+iCalendar file is used to feed a Google Calendar account which holds
+only my free/busy information. 
+
 I do not want to give everybody access to my Google Calendar because
 of privacy issues. Additionally, I do like the principle of least
-necessary permissions.
+necessary permissions. I would never share my detailed Google
+calendar with a bigger group of people. 
 
-With a filtered iCalendar file on my web server, I can create a
-Google Calendar which contains only the time/date information of my
+However, with a filtered iCalendar file on my web server, I can create
+a Google Calendar which contains only the time/date information of my
 events. I am happy to share this information with all of my friends
-since there is minimum of information about my calendar and maximum
-of information about when I am free or busy.
+since there is minimum of information about my calendar and maximum of
+information about when I am free or busy.
 
-Pre-configured tags like "@town" or "@office" optionally can be
-written to the location and description field.
+Pre-configured tags like "company" or "@office" optionally can be
+written to the location and summary field.
 
 Yes, Google Calendar [[https://support.google.com/a/bin/answer.py?hl%3Den&answer%3D60765][does provide a free/busy only sharing
 option]]. However, at the one hand, I want to be absolutely sure about
