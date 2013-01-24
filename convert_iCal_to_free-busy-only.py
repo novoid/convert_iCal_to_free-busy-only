@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-24 21:38:02 vk>
+# Time-stamp: <2013-01-24 22:36:00 vk>
 
 
 ## TODO:
@@ -26,6 +26,7 @@ CATEGORIES = [
 ##  know, what you are doing :-)                                         ##
 ## ===================================================================== ##
 
+## NOTE: in case of issues, check iCalendar files using: http://icalvalid.cloudapp.net/
 
 import os
 import sys
@@ -105,7 +106,7 @@ def add_to_field(field, string):
 
     if field:
         ## add an additional string
-        newfield = field + '; ' + string
+        newfield = field + '\; ' + string
     else:
         ## add first string
         newfield = string
@@ -191,8 +192,8 @@ def handle_file(inputfilename, outputfilename, dryrun):
                 
             ## lines that will be copied to output (unmodified):
             elif line.startswith('UID:') or \
-                    line.startswith('DTSTART:') or \
-                    line.startswith('DTEND:'):
+                    line.startswith('DTSTART') or \
+                    line.startswith('DTEND'):
                 newline = line
         
             ## temporarily store content fields:
@@ -218,7 +219,7 @@ def handle_file(inputfilename, outputfilename, dryrun):
         
                     ## write description:
                     if currentsummaryline:
-                        output.write('SUMMARY: ' + DEFAULT_SUMMARY + '; ' + currentsummaryline + '\n')
+                        output.write('SUMMARY: ' + DEFAULT_SUMMARY + '\; ' + currentsummaryline + '\n')
                     else:
                         output.write('SUMMARY: ' + DEFAULT_SUMMARY + '\n')
         
@@ -236,6 +237,8 @@ def handle_file(inputfilename, outputfilename, dryrun):
                     currentlocation = ""
                     newentry = ""
         
+            elif line.startswith('END:VCALENDAR'):
+                    output.write(line + '\n')
         
             if parsing_header:
                 newline = line
