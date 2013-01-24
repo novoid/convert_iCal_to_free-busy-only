@@ -1,4 +1,4 @@
-## Time-stamp: <2013-01-24 21:46:14 vk>
+## Time-stamp: <2013-01-24 21:47:25 vk>
 ## -*- coding: utf-8 -*-
 ## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
 
@@ -44,40 +44,34 @@ find handy to include, others not.
 
 The entry ...
 
-#+BEGIN_VERSE
-BEGIN:VEVENT
-UID: TS-4e622ec4-ffac-4097-82c6-3b12632d3e33
-DTSTART:20130116T120000
-DTEND:20130116T140000
-SUMMARY:Going to my doctor
-DESCRIPTION: Neck pain is already disturbing my productivity.
-CATEGORIES:neck,@town
-END:VEVENT
-#+END_VERSE
+: BEGIN:VEVENT
+: UID: TS-4e622ec4-ffac-4097-82c6-3b12632d3e33
+: DTSTART:20130116T120000
+: DTEND:20130116T140000
+: SUMMARY:Going to my doctor
+: DESCRIPTION: Neck pain is already disturbing my productivity.
+: CATEGORIES:neck,@town
+: END:VEVENT
 
 ... gets transformed into ...
 
-#+BEGIN_VERSE
-BEGIN:VEVENT
-UID: TS-4e622ec4-ffac-4097-82c6-3b12632d3e33
-DTSTART:20130116T120000
-DTEND:20130116T140000
-SUMMARY: busy
-LOCATION: town
-END:VEVENT
-#+END_VERSE
+: BEGIN:VEVENT
+: UID: TS-4e622ec4-ffac-4097-82c6-3b12632d3e33
+: DTSTART:20130116T120000
+: DTEND:20130116T140000
+: SUMMARY: busy
+: LOCATION: town
+: END:VEVENT
 
 ... with default settings and ...
 
-#+BEGIN_VERSE
-BEGIN:VEVENT
-UID: TS-4e622ec4-ffac-4097-82c6-3b12632d3e33
-DTSTART:20130116T120000
-DTEND:20130116T140000
-SUMMARY: busy; health
-LOCATION: town
-END:VEVENT
-#+END_VERSE
+: BEGIN:VEVENT
+: UID: TS-4e622ec4-ffac-4097-82c6-3b12632d3e33
+: DTSTART:20130116T120000
+: DTEND:20130116T140000
+: SUMMARY: busy; health
+: LOCATION: town
+: END:VEVENT
 
 ... when you decide to automatically replace the "neck" tag with "health".
 
