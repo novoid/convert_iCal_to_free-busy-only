@@ -1,0 +1,138 @@
+## Time-stamp: <2013-01-24 21:38:38 vk>
+## -*- coding: utf-8 -*-
+## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
+
+* convert_iCal_to_free-busy-only
+
+This Python script converts a given [[https://en.wikipedia.org/wiki/ICalendar][iCalendar]] file and filters
+out *everything* except:
+- dates and times (DTSTART and DTEND)
+- UIDs
+- pre-configured tags from the CATEGORIES field
+
+Please refer to the Features section below for details.
+
+My use case: I generate my iCalendar files with [[http://orgmode.org][Org-mode]] using its
+[[http://orgmode.org/manual/iCalendar-export.html][iCalendar-export]] for [[http://orgmode.org/worg/org-tutorials/org-google-sync.html][Google Calendar synchronization]].
+
+** Why
+
+I do not want to give everybody access to my Google Calendar because
+of privacy issues. Additionally, I do like the principle of least
+necessary permissions.
+
+With a filtered iCalendar file on my web server, I can create a
+Google Calendar which contains only the time/date information of my
+events. I am happy to share this information with all of my friends
+since there is minimum of information about my calendar and maximum
+of information about when I am free or busy.
+
+Pre-configured tags like "@town" or "@office" optionally can be
+written to the location and description field.
+
+Yes, Google Calendar [[https://support.google.com/a/bin/answer.py?hl%3Den&answer%3D60765][does provide a free/busy only sharing
+option]]. However, at the one hand, I want to be absolutely sure about
+what's happening here. On the other hand, I want to have a more fine
+grained control on what information should be published. Some tags I
+find handy to include, others not.
+
+** Example
+
+The entry ...
+
+#+BEGIN_VERSE
+BEGIN:VEVENT
+UID: TS-4e622ec4-ffac-4097-82c6-3b12632d3e33
+DTSTART:20130116T120000
+DTEND:20130116T140000
+SUMMARY:Going to my doctor
+DESCRIPTION: Neck pain is already disturbing my productivity.
+CATEGORIES:neck,@town
+END:VEVENT
+#+END_VERSE
+
+... gets transformed into ...
+
+#+BEGIN_VERSE
+BEGIN:VEVENT
+UID: TS-4e622ec4-ffac-4097-82c6-3b12632d3e33
+DTSTART:20130116T120000
+DTEND:20130116T140000
+SUMMARY: busy
+LOCATION: town
+END:VEVENT
+#+END_VERSE
+
+... with default settings and ...
+
+#+BEGIN_VERSE
+BEGIN:VEVENT
+UID: TS-4e622ec4-ffac-4097-82c6-3b12632d3e33
+DTSTART:20130116T120000
+DTEND:20130116T140000
+SUMMARY: busy; health
+LOCATION: town
+END:VEVENT
+#+END_VERSE
+
+... when you decide to automatically replace the "neck" tag with "health".
+
+** Advantages
+
+- 100% control over your personal data
+- more fine-grained control on what information is published and what
+  not
+
+** Disadvantages
+
+- most probably you'll need an additional Google account for your
+  free/busy calendar
+  - I don't want to see every event twice: the detailed information
+    and the filtered event as well
+- it's a "works-for-me" solution and not a big, fancy product
+  - you have to be comfortable in using the shell and such
+
+** Features
+
+- things that are not altered:
+  - complete header
+  - dates and times (DTSTART and DTEND)
+  - UID
+  - BEGIN:VEVENT and END:VEVENT
+- things that are modified:
+  - SUMMARY: replaced with DEFAULT_SUMMARY (set in the header
+    of the Python file)
+- things that are ignored
+  - everything else
+
+You can define a list of pairs in CATEGORIES (in the header of the
+Python file). For example: ["foo","something descriptive"]
+
+In each CATEGORIES field (like "CATEGORIES: foo,bar"), the script is
+looking for matches (here: "foo") and takes the replacement string
+(here: "something descriptive") as the new SUMMARY field in the
+iCalendar entry.
+ 
+Additionally, if any category starts with an @-sign, it will be added
+to the LOCATION field. For example: "@home" will result in "home" in
+the LOCATION field.
+
+You can define @-tags in the CATEGORIES list as well: ["@home", "at
+my flat"] will result in LOCATION entries with "at my flat".
+
+
+
+* Contribute!
+
+I am looking for your ideas:
+
+If you want to contribute to this cool project, please fork and
+contribute!
+
+
+* Local Variables                                                  :noexport:
+# Local Variables:
+# mode: auto-fill
+# mode: flyspell
+# eval: (ispell-change-dictionary "en_US")
+# End:
