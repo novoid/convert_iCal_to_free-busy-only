@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-25 13:34:13 vk>
+# Time-stamp: <2013-01-25 13:45:56 vk>
 
 
 ## TODO:
@@ -21,16 +21,15 @@ CATEGORIES = [
 #    ["", ""],
     ]
 
+## this list is case sensitive:
 SUMMARY = [
-    ["DND", "Handy auf leise"],
-    [" ? ", "noch nicht fix!"],
+    ["DND", "Handy auf leise"],  ## I mark events where my phone is silenced with "DND"
+    [" ? ", "noch nicht fix!"],  ## events starting with " ? " are not fixed and might not happen at all
 #    ["", ""],
 #    ["", ""],
 #    ["", ""],
     ]
 
-SILENT_SWITCH = ["DND", "Handy auf leise"]
-NOTSURE_SWITCH = [' ? ', "noch nicht fix!"]  ## if event is not fixed
 
 ## ===================================================================== ##
 ##  You might not want to modify anything below this line if you do not  ##
@@ -129,15 +128,10 @@ def parse_summary_for_known_tags(currentsummary, newsummary, newlocation):
     """parse summary for pre-defined strings in SUMMARY and generate
     new summary and location accordingly."""
 
-    if NOTSURE_SWITCH[0] in currentsummary:
-        newsummary = add_to_field(newsummary, NOTSURE_SWITCH[1])
-        logging.debug("NOTSURE_SWITCH indicator added")
-
-    if SILENT_SWITCH[0] in currentsummary:
-        newsummary = add_to_field(newsummary, SILENT_SWITCH[1])
-        logging.debug("SILENT_SWITCH[0] found in currentsummary: [%s]" % currentsummary)
-        logging.debug("SILENT_SWITCH indicator added")
-
+    for entry in SUMMARY:
+        if entry[0] in currentsummary:
+            newsummary = add_to_field(newsummary, entry[1])
+            logging.debug("summary searchstring [%s] found and added [%s] to newsummary" % ( entry[0], entry[1]))
 
     return newsummary, newlocation
 

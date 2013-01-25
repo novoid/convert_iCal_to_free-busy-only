@@ -1,4 +1,4 @@
-## Time-stamp: <2013-01-25 13:07:32 vk>
+## Time-stamp: <2013-01-25 13:45:21 vk>
 ## -*- coding: utf-8 -*-
 ## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
 
@@ -118,17 +118,16 @@ the LOCATION field.
 You can define @-tags in the CATEGORIES list as well: ["@home", "at
 my flat"] will result in LOCATION entries with "at my flat".
 
-SILENT_SWITCH defines a string to search for and its
-replacement. When found in description, the replacement string is
-added to the new description. I am using this with ["DND", "phone will
+Similarily, SUMMARY is a list of pairs where strings are searched in
+the summary field and corresponding replacement strings are added to
+the new summary line. I am using this with ["DND", "phone will
 be turned off"]: if "DND" is found in the description, my phone goes
 to silent mode automatically (using [[http://tasker.dinglisch.net/][Tasker]]). It's cool to be able to
 add this to the free/busy list.
 
-Similarily, NOTSURE_SWITCH defines a pair of strings. If the first
-one is found in the summary line, the second one is added to the new
-summary line in order to mark events that are not yet fixed.
-
+Something which I do as well: If the old summary line starts with " ?
+", the event is not finalized/fixed. It might not happen at all. I
+replace this indicator with a hint in the new summary line.
 
 * Contribute!
 
