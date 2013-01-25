@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-25 13:08:09 vk>
+# Time-stamp: <2013-01-25 13:15:27 vk>
 
 
 ## TODO:
@@ -16,6 +16,14 @@ CATEGORIES = [
     ["@ALW", "bin daheim"],
     ["@out_of_town", "nicht in Graz"],
     ["other", "andere Person - nicht von mir!"],
+#    ["", ""],
+#    ["", ""],
+#    ["", ""],
+    ]
+
+SUMMARY = [
+    ["DND", "Handy auf leise"],
+    [" ? ", "noch nicht fix!"],
 #    ["", ""],
 #    ["", ""],
 #    ["", ""],
@@ -117,7 +125,7 @@ def add_to_field(field, string):
     return newfield
 
 
-def parse_for_known_tags(categories, not_sure, silent_switch):
+def parse_categories_for_known_tags(categories, not_sure, silent_switch):
     """parse categories for pre-defined tags and generate new summary
     and location accordingly. Add not_sure and silent indicators if
     given."""
@@ -207,25 +215,17 @@ def handle_file(inputfilename, outputfilename, dryrun):
         
                 parsing_header = False
                 
-            ## lines that will be copied to output (unmodified):
+            ## lines that are identical in output:
             elif line.startswith('UID:') or \
                     line.startswith('DTSTART') or \
                     line.startswith('DTEND'):
                 newline = line
         
-            ## temporarily store content fields:
+            ## store content fields:
             elif line.startswith('SUMMARY:'):
                 currentsummary = line
-                if NOTSURE_SWITCH[0] in line:
-                    logging.debug("found indicator that event is not sure")
-                    not_sure = True
-                if SILENT_SWITCH[0] in line:
-                    logging.debug("found indicator that phone will be silent for this event")
-                    silent_switch = True
-
             elif line.startswith('DESCRIPTION:'):
                 currentdescription = line
-
             elif line.startswith('CATEGORIES:'):
                 currentcategories = line
         
@@ -234,24 +234,31 @@ def handle_file(inputfilename, outputfilename, dryrun):
         
                 ## entry is finished
                 if newentry and not dryrun:
+
+                    if NOTSURE_SWITCH[0] in currentsummary:
+                        logging.debug("found indicator that event is not sure")
+                        not_sure = True
+                    if SILENT_SWITCH[0] in currentsummary:
+                        logging.debug("found indicator that phone will be silent for this event")
+                        silent_switch = True
         
                     ## parse categories for known substrings
                     ## copy known substrings to description line
                     ## copy known location-based substrings to location line
-                    currentsummaryline, currentlocationline = \
-                        parse_for_known_tags(currentcategories, not_sure, silent_switch)
+                    newsummary, newlocation = \
+                        parse_categories_for_known_tags(currentcategories, not_sure, silent_switch)
         
                     output.write(newentry)  ## entry so far without description, location, or end
         
                     ## write description:
-                    if currentsummaryline:
-                        output.write('SUMMARY: ' + currentsummaryline + '\n')
+                    if newsummary:
+                        output.write('SUMMARY: ' + newsummary + '\n')
                     else:
                         output.write('SUMMARY: ' + DEFAULT_SUMMARY + '\n')
         
                     ## if found, write location:
-                    if currentlocationline:
-                        output.write('LOCATION: ' + currentlocationline + '\n')
+                    if newlocation:
+                        output.write('LOCATION: ' + newlocation + '\n')
         
                     ## write end of iCalendar entry
                     output.write(line + '\n')
