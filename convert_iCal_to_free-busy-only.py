@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-25 13:45:56 vk>
+# Time-stamp: <2013-01-25 17:43:48 vk>
 
 
 ## TODO:
@@ -30,6 +30,7 @@ SUMMARY = [
 #    ["", ""],
     ]
 
+SHOW_DESCRIPTION_TAG = 'public'
 
 ## ===================================================================== ##
 ##  You might not want to modify anything below this line if you do not  ##
@@ -136,7 +137,7 @@ def parse_summary_for_known_tags(currentsummary, newsummary, newlocation):
     return newsummary, newlocation
 
 
-def parse_categories_for_known_tags(categories, newsummary, newlocation):
+def parse_categories_for_known_tags(summary, categories, newsummary, newlocation):
     """parse categories for pre-defined tags in CATEGORIES and generate new summary
     and location accordingly."""
 
@@ -144,9 +145,14 @@ def parse_categories_for_known_tags(categories, newsummary, newlocation):
     #logging.debug("catlist [%s]" % str(catlist) )
 
     if catlist:
+
         ## FIXXME: this algorithm is not optimized for performance! (not necessary for few items)
         for tag in catlist:
             #logging.debug("tag [%s]" % tag )
+
+            if SHOW_DESCRIPTION_TAG == tag:
+                newsummary = summary[9:] + '; ' + newsummary
+
             for search, replacement in CATEGORIES:
                 #logging.debug("search: [%s]  replacement: [%s]" % (search, replacement) )
 
@@ -241,7 +247,7 @@ def handle_file(inputfilename, outputfilename, dryrun):
         
                     ## parse categories for known substrings
                     newsummary, newlocation = \
-                        parse_categories_for_known_tags(currentcategories, newsummary, newlocation)
+                        parse_categories_for_known_tags(currentsummary, currentcategories, newsummary, newlocation)
 
                     logging.debug("newsummary: [%s]" % newsummary)
                     logging.debug("newlocation: [%s]" % newlocation)
