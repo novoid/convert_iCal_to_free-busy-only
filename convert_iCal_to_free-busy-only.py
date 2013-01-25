@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-25 12:31:28 vk>
+# Time-stamp: <2013-01-25 13:08:09 vk>
 
 
 ## TODO:
 ## * fix parts marked with «FIXXME»
 
 DEFAULT_SUMMARY = 'busy'              ## in case no special tag is found
-DEFAULT_NOTSURE = "noch nicht fix!"   ## if event is not fixed
 
 ## this list is case sensitive:
 CATEGORIES = [
@@ -23,6 +22,7 @@ CATEGORIES = [
     ]
 
 SILENT_SWITCH = ["DND", "Handy auf leise"]
+NOTSURE_SWITCH = [' ? ', "noch nicht fix!"]  ## if event is not fixed
 
 ## ===================================================================== ##
 ##  You might not want to modify anything below this line if you do not  ##
@@ -129,8 +129,8 @@ def parse_for_known_tags(categories, not_sure, silent_switch):
 
     ## indicator from old summary line:
     if not_sure:
-        newsummary = add_to_field(newsummary, DEFAULT_NOTSURE)
-        logging.debug("DEFAULT_NOTSURE indicator added")
+        newsummary = add_to_field(newsummary, NOTSURE_SWITCH[1])
+        logging.debug("NOTSURE_SWITCH indicator added")
 
     ## indicator from old summary line:
     if silent_switch:
@@ -216,7 +216,7 @@ def handle_file(inputfilename, outputfilename, dryrun):
             ## temporarily store content fields:
             elif line.startswith('SUMMARY:'):
                 currentsummary = line
-                if '?' in line:
+                if NOTSURE_SWITCH[0] in line:
                     logging.debug("found indicator that event is not sure")
                     not_sure = True
                 if SILENT_SWITCH[0] in line:
