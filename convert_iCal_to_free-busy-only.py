@@ -1,25 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-24 22:36:00 vk>
+# Time-stamp: <2013-01-25 12:31:28 vk>
 
 
 ## TODO:
 ## * fix parts marked with «FIXXME»
 
-DEFAULT_SUMMARY = 'busy'
+DEFAULT_SUMMARY = 'busy'              ## in case no special tag is found
+DEFAULT_NOTSURE = "noch nicht fix!"   ## if event is not fixed
 
 ## this list is case sensitive:
 CATEGORIES = [
     ["@Stadt", "in der Stadt"], 
-    ["lp", "nicht so wichtig"], 
-    ["@TUG", "an der TU Graz"],
-    ["@ALW", "daheim"],
+    ["lp", "kann ich einfach absagen/auslassen"], 
+    ["@TUG", "an der TU"],
+    ["@ALW", "bin daheim"],
     ["@out_of_town", "nicht in Graz"],
-#    ["", ""],
+    ["other", "andere Person - nicht von mir!"],
 #    ["", ""],
 #    ["", ""],
 #    ["", ""],
     ]
+
+SILENT_SWITCH = ["DND", "Handy auf leise"]
 
 ## ===================================================================== ##
 ##  You might not want to modify anything below this line if you do not  ##
@@ -114,14 +117,25 @@ def add_to_field(field, string):
     return newfield
 
 
-def parse_for_known_tags(categories):
-    """parse summary and categories for pre-defined tags and 
-    generate new summary and location accordingly"""
+def parse_for_known_tags(categories, not_sure, silent_switch):
+    """parse categories for pre-defined tags and generate new summary
+    and location accordingly. Add not_sure and silent indicators if
+    given."""
 
     newsummary = newlocation = ""
 
     catlist = categories[11:].split(',')
     #logging.debug("catlist [%s]" % str(catlist) )
+
+    ## indicator from old summary line:
+    if not_sure:
+        newsummary = add_to_field(newsummary, DEFAULT_NOTSURE)
+        logging.debug("DEFAULT_NOTSURE indicator added")
+
+    ## indicator from old summary line:
+    if silent_switch:
+        newsummary = add_to_field(newsummary, SILENT_SWITCH[1])
+        logging.debug("SILENT_SWITCH indicator added")
 
     if catlist:
         ## FIXXME: this algorithm is not optimized for performance! (not necessary for few items)
@@ -171,13 +185,16 @@ def handle_file(inputfilename, outputfilename, dryrun):
 
     with open(outputfilename, 'w') as output:
 
+        not_sure = False  ## if true, the event is only planned vague
+        silent_switch = False  ## if true, you can not contact me during this event
+            
         input = open(inputfilename, 'r')
         for rawline in input:
         
             newline = ""
             line = rawline.strip()
             logging.debug("line: %s" % line)
-            
+
             ## detect new event (and header end)
             if line.startswith('BEGIN:VEVENT'):
                 logging.debug("new VEVENT .............................................")
@@ -199,8 +216,16 @@ def handle_file(inputfilename, outputfilename, dryrun):
             ## temporarily store content fields:
             elif line.startswith('SUMMARY:'):
                 currentsummary = line
+                if '?' in line:
+                    logging.debug("found indicator that event is not sure")
+                    not_sure = True
+                if SILENT_SWITCH[0] in line:
+                    logging.debug("found indicator that phone will be silent for this event")
+                    silent_switch = True
+
             elif line.startswith('DESCRIPTION:'):
                 currentdescription = line
+
             elif line.startswith('CATEGORIES:'):
                 currentcategories = line
         
@@ -213,13 +238,14 @@ def handle_file(inputfilename, outputfilename, dryrun):
                     ## parse categories for known substrings
                     ## copy known substrings to description line
                     ## copy known location-based substrings to location line
-                    currentsummaryline, currentlocationline = parse_for_known_tags(currentcategories)
+                    currentsummaryline, currentlocationline = \
+                        parse_for_known_tags(currentcategories, not_sure, silent_switch)
         
                     output.write(newentry)  ## entry so far without description, location, or end
         
                     ## write description:
                     if currentsummaryline:
-                        output.write('SUMMARY: ' + DEFAULT_SUMMARY + '\; ' + currentsummaryline + '\n')
+                        output.write('SUMMARY: ' + currentsummaryline + '\n')
                     else:
                         output.write('SUMMARY: ' + DEFAULT_SUMMARY + '\n')
         
@@ -236,6 +262,7 @@ def handle_file(inputfilename, outputfilename, dryrun):
                     currentcategories = ""
                     currentlocation = ""
                     newentry = ""
+                    not_sure = False
         
             elif line.startswith('END:VCALENDAR'):
                     output.write(line + '\n')

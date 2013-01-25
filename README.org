@@ -1,4 +1,4 @@
-## Time-stamp: <2013-01-24 21:47:25 vk>
+## Time-stamp: <2013-01-25 12:14:32 vk>
 ## -*- coding: utf-8 -*-
 ## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
 
@@ -69,7 +69,7 @@ The entry ...
 : UID: TS-4e622ec4-ffac-4097-82c6-3b12632d3e33
 : DTSTART:20130116T120000
 : DTEND:20130116T140000
-: SUMMARY: busy; health
+: SUMMARY: health
 : LOCATION: town
 : END:VEVENT
 
@@ -118,7 +118,15 @@ the LOCATION field.
 You can define @-tags in the CATEGORIES list as well: ["@home", "at
 my flat"] will result in LOCATION entries with "at my flat".
 
+If the description contains a question mark, the new description
+contains the string defined in DEFAULT_NOTSURE.
 
+SILENT_SWITCH defines a string to search for and its
+replacement. When found in description, the replacement string is
+added to the new description. I am using this with ["DND", "phone will
+be turned off"]: if "DND" is found in the description, my phone goes
+to silent mode automatically (using [[http://tasker.dinglisch.net/][Tasker]]). It's cool to be able to
+add this to the free/busy list.
 
 * Contribute!
 
