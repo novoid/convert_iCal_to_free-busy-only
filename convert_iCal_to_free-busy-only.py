@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-25 13:15:27 vk>
+# Time-stamp: <2013-01-25 13:34:13 vk>
 
 
 ## TODO:
@@ -125,25 +125,29 @@ def add_to_field(field, string):
     return newfield
 
 
-def parse_categories_for_known_tags(categories, not_sure, silent_switch):
-    """parse categories for pre-defined tags and generate new summary
-    and location accordingly. Add not_sure and silent indicators if
-    given."""
+def parse_summary_for_known_tags(currentsummary, newsummary, newlocation):
+    """parse summary for pre-defined strings in SUMMARY and generate
+    new summary and location accordingly."""
 
-    newsummary = newlocation = ""
-
-    catlist = categories[11:].split(',')
-    #logging.debug("catlist [%s]" % str(catlist) )
-
-    ## indicator from old summary line:
-    if not_sure:
+    if NOTSURE_SWITCH[0] in currentsummary:
         newsummary = add_to_field(newsummary, NOTSURE_SWITCH[1])
         logging.debug("NOTSURE_SWITCH indicator added")
 
-    ## indicator from old summary line:
-    if silent_switch:
+    if SILENT_SWITCH[0] in currentsummary:
         newsummary = add_to_field(newsummary, SILENT_SWITCH[1])
+        logging.debug("SILENT_SWITCH[0] found in currentsummary: [%s]" % currentsummary)
         logging.debug("SILENT_SWITCH indicator added")
+
+
+    return newsummary, newlocation
+
+
+def parse_categories_for_known_tags(categories, newsummary, newlocation):
+    """parse categories for pre-defined tags in CATEGORIES and generate new summary
+    and location accordingly."""
+
+    catlist = categories[11:].split(',')
+    #logging.debug("catlist [%s]" % str(catlist) )
 
     if catlist:
         ## FIXXME: this algorithm is not optimized for performance! (not necessary for few items)
@@ -193,9 +197,6 @@ def handle_file(inputfilename, outputfilename, dryrun):
 
     with open(outputfilename, 'w') as output:
 
-        not_sure = False  ## if true, the event is only planned vague
-        silent_switch = False  ## if true, you can not contact me during this event
-            
         input = open(inputfilename, 'r')
         for rawline in input:
         
@@ -228,25 +229,28 @@ def handle_file(inputfilename, outputfilename, dryrun):
                 currentdescription = line
             elif line.startswith('CATEGORIES:'):
                 currentcategories = line
-        
+
             ## write completed event entry:
             elif line.startswith('END:VEVENT'):
         
                 ## entry is finished
                 if newentry and not dryrun:
 
-                    if NOTSURE_SWITCH[0] in currentsummary:
-                        logging.debug("found indicator that event is not sure")
-                        not_sure = True
-                    if SILENT_SWITCH[0] in currentsummary:
-                        logging.debug("found indicator that phone will be silent for this event")
-                        silent_switch = True
+                    newsummary = newlocation = ""
+
+                    ## parse summary for known substrings
+                    newsummary, newlocation = \
+                        parse_summary_for_known_tags(currentsummary, newsummary, newlocation)
+
+                    logging.debug("newsummary: [%s]" % newsummary)
+                    logging.debug("newlocation: [%s]" % newlocation)
         
                     ## parse categories for known substrings
-                    ## copy known substrings to description line
-                    ## copy known location-based substrings to location line
                     newsummary, newlocation = \
-                        parse_categories_for_known_tags(currentcategories, not_sure, silent_switch)
+                        parse_categories_for_known_tags(currentcategories, newsummary, newlocation)
+
+                    logging.debug("newsummary: [%s]" % newsummary)
+                    logging.debug("newlocation: [%s]" % newlocation)
         
                     output.write(newentry)  ## entry so far without description, location, or end
         
