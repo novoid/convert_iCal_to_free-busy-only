@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-25 17:43:48 vk>
+# Time-stamp: <2013-01-27 17:39:37 vk>
 
 
 ## TODO:
@@ -189,6 +189,7 @@ def handle_file(inputfilename, outputfilename, dryrun):
     logging.info("output file \""+ outputfilename + "\"")
 
     parsing_header = True
+    count_events = 0
     newentry = ""
     currentsummary = ""
     currentdescription = ""
@@ -207,6 +208,7 @@ def handle_file(inputfilename, outputfilename, dryrun):
             ## detect new event (and header end)
             if line.startswith('BEGIN:VEVENT'):
                 logging.debug("new VEVENT .............................................")
+                count_events+=1
                 newline = line
         
                 ## header is finished:
@@ -284,8 +286,10 @@ def handle_file(inputfilename, outputfilename, dryrun):
             if newline and not dryrun:
                 #output.write(newline + '\n')
                 newentry += newline + '\n'
-        
+
+        return count_events
     
+
 
 def main():
     """Main function"""
@@ -324,9 +328,9 @@ def main():
        else:
            error_exit(4, "Sorry, output file \"%s\" already exists and you did not use the overwrite option \"--overwrite\"." % options.outputfilename)
            
-    handle_file(options.inputfilename, options.outputfilename, dryrun)
+    count_events = handle_file(options.inputfilename, options.outputfilename, dryrun)
 
-    logging.info("successfully finished.")
+    logging.info("successfully finished converting %s events." % count_events)
 
 
 if __name__ == "__main__":
