@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-27 17:39:37 vk>
+# Time-stamp: <2013-01-28 11:24:09 vk>
 
 
 ## TODO:
@@ -30,7 +30,11 @@ SUMMARY = [
 #    ["", ""],
     ]
 
+## shows the original description line
 SHOW_DESCRIPTION_TAG = 'public'
+
+## overrules enything else and shows only DEFAULT_SUMMARY and no location
+PRIVATE_TAG = 'private'
 
 ## ===================================================================== ##
 ##  You might not want to modify anything below this line if you do not  ##
@@ -152,6 +156,10 @@ def parse_categories_for_known_tags(summary, categories, newsummary, newlocation
 
             if SHOW_DESCRIPTION_TAG == tag:
                 newsummary = summary[9:] + '; ' + newsummary
+
+            if PRIVATE_TAG == tag:
+                ## overrule everything else
+                return DEFAULT_SUMMARY, ""
 
             for search, replacement in CATEGORIES:
                 #logging.debug("search: [%s]  replacement: [%s]" % (search, replacement) )
