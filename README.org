@@ -1,4 +1,4 @@
-## Time-stamp: <2013-01-25 17:45:49 vk>
+## Time-stamp: <2013-01-30 16:19:29 vk>
 ## -*- coding: utf-8 -*-
 ## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
 
@@ -12,6 +12,7 @@ out *everything* except:
 
 Please refer to the Features section below for details.
 
+Source: https://github.com/novoid/convert_iCal_to_free-busy-only
 
 ** Why
 

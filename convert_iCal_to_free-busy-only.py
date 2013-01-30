@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-28 11:24:09 vk>
+# Time-stamp: <2013-01-30 16:19:35 vk>
 
 
 ## TODO:
@@ -66,7 +66,7 @@ summary gets replaced with a minimum of information.\n\
 \n\
 Please refer to README.org for further details.\n\
 \n\
-\n\
+https://github.com/novoid/convert_iCal_to_free-busy-only\n\
 \n\
 :copyright: (c) 2013 by Karl Voit <tools@Karl-Voit.at>\n\
 :license: GPL v3 or any later version\n\
