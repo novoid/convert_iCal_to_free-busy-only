@@ -1,4 +1,4 @@
-## Time-stamp: <2013-01-30 16:19:29 vk>
+## Time-stamp: <2013-02-01 12:50:16 vk>
 ## -*- coding: utf-8 -*-
 ## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
 
@@ -130,7 +130,7 @@ Something which I do as well: If the old summary line starts with " ?
 ", the event is not finalized/fixed. It might not happen at all. I
 replace this indicator with a hint in the new summary line.
 
-In SHOW_DESCRIPTION_TAG you can define a tag for entries, where the
+In SHOW_SUMMARY_TAG you can define a tag for entries, where the
 original summary should be included in the output. For example, when I
 use the tag "public" for an event, its summary does not get filtered
 out.

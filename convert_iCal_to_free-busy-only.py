@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-01-30 16:19:35 vk>
+# Time-stamp: <2013-02-01 12:50:08 vk>
 
 
 ## TODO:
@@ -31,7 +31,7 @@ SUMMARY = [
     ]
 
 ## shows the original description line
-SHOW_DESCRIPTION_TAG = 'public'
+SHOW_SUMMARY_TAG = 'public'
 
 ## overrules enything else and shows only DEFAULT_SUMMARY and no location
 PRIVATE_TAG = 'private'
@@ -154,7 +154,7 @@ def parse_categories_for_known_tags(summary, categories, newsummary, newlocation
         for tag in catlist:
             #logging.debug("tag [%s]" % tag )
 
-            if SHOW_DESCRIPTION_TAG == tag:
+            if SHOW_SUMMARY_TAG == tag:
                 newsummary = summary[9:] + '; ' + newsummary
 
             if PRIVATE_TAG == tag:
