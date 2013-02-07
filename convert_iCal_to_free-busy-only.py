@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Time-stamp: <2013-02-01 12:50:08 vk>
+# Time-stamp: <2013-02-07 14:05:53 vk>
 
 
 ## TODO:
@@ -10,8 +10,8 @@ DEFAULT_SUMMARY = 'busy'              ## in case no special tag is found
 
 ## this list is case sensitive:
 CATEGORIES = [
-    ["@Stadt", "in der Stadt"], 
-    ["lp", "kann ich einfach absagen/auslassen"], 
+    ["@Stadt", "in der Stadt"],
+    ["lp", "kann ich einfach absagen/auslassen"],
     ["@TUG", "an der TU"],
     ["@ALW", "bin daheim"],
     ["@out_of_town", "nicht in Graz"],
@@ -45,7 +45,6 @@ PRIVATE_TAG = 'private'
 
 import os
 import sys
-import re
 import time
 import logging
 from optparse import OptionParser
@@ -54,8 +53,6 @@ from optparse import OptionParser
 PROG_VERSION_NUMBER = u"0.1"
 PROG_VERSION_DATE = u"2013-01-24"
 INVOCATION_TIME = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime())
-
-
 
 USAGE = u"\n\
     " + sys.argv[0] + u" -i <inputfile.ics> -o <outputfile.ics>\n\
@@ -71,7 +68,7 @@ https://github.com/novoid/convert_iCal_to_free-busy-only\n\
 :copyright: (c) 2013 by Karl Voit <tools@Karl-Voit.at>\n\
 :license: GPL v3 or any later version\n\
 :bugreports: <tools@Karl-Voit.at>\n\
-:version: "+PROG_VERSION_NUMBER+" from "+PROG_VERSION_DATE+"\n"
+:version: " + PROG_VERSION_NUMBER + " from " + PROG_VERSION_DATE + "\n"
 
 parser = OptionParser(usage=USAGE)
 
@@ -136,7 +133,7 @@ def parse_summary_for_known_tags(currentsummary, newsummary, newlocation):
     for entry in SUMMARY:
         if entry[0] in currentsummary:
             newsummary = add_to_field(newsummary, entry[1])
-            logging.debug("summary searchstring [%s] found and added [%s] to newsummary" % ( entry[0], entry[1]))
+            logging.debug("summary searchstring [%s] found and added [%s] to newsummary" % (entry[0], entry[1]))
 
     return newsummary, newlocation
 
@@ -169,7 +166,7 @@ def parse_categories_for_known_tags(summary, categories, newsummary, newlocation
 
                     logging.debug("found known tag [%s], replacing with [%s]" % (search, replacement))
                     newsummary = add_to_field(newsummary, replacement)
-                    
+
                     ## if the tag starts with an at-sign, add it to location as well:
                     if tag.startswith('@'):
 
@@ -184,31 +181,29 @@ def parse_categories_for_known_tags(summary, categories, newsummary, newlocation
 
                     logging.debug("found generic location tag [%s]" % (tag))
                     newlocation = add_to_field(newlocation, tag[1:])
-                        
+
     return newsummary, newlocation
 
 
 def handle_file(inputfilename, outputfilename, dryrun):
     """handles inputfile and generates outputfile"""
 
-    logging.debug( "--------------------------------------------")
+    logging.debug("--------------------------------------------")
     logging.info(sys.argv[0] + "   ... called with ... ")
-    logging.info("input file \""+ inputfilename + "\"  ... and ...")
-    logging.info("output file \""+ outputfilename + "\"")
+    logging.info("input file \"" + inputfilename + "\"  ... and ...")
+    logging.info("output file \"" + outputfilename + "\"")
 
     parsing_header = True
     count_events = 0
     newentry = ""
     currentsummary = ""
-    currentdescription = ""
     currentcategories = ""
-    currentlocation = ""
 
     with open(outputfilename, 'w') as output:
 
         input = open(inputfilename, 'r')
         for rawline in input:
-        
+
             newline = ""
             line = rawline.strip()
             logging.debug("line: %s" % line)
@@ -216,33 +211,33 @@ def handle_file(inputfilename, outputfilename, dryrun):
             ## detect new event (and header end)
             if line.startswith('BEGIN:VEVENT'):
                 logging.debug("new VEVENT .............................................")
-                count_events+=1
+                count_events += 1
                 newline = line
-        
+
                 ## header is finished:
                 if parsing_header and not dryrun:
                     output.write(newentry)
                     newentry = ""
-        
+
                 parsing_header = False
-                
+
             ## lines that are identical in output:
             elif line.startswith('UID:') or \
                     line.startswith('DTSTART') or \
                     line.startswith('DTEND'):
                 newline = line
-        
+
             ## store content fields:
             elif line.startswith('SUMMARY:'):
                 currentsummary = line
             elif line.startswith('DESCRIPTION:'):
-                currentdescription = line
+                currentdescription = line  ## not used yet
             elif line.startswith('CATEGORIES:'):
                 currentcategories = line
 
             ## write completed event entry:
             elif line.startswith('END:VEVENT'):
-        
+
                 ## entry is finished
                 if newentry and not dryrun:
 
@@ -254,56 +249,52 @@ def handle_file(inputfilename, outputfilename, dryrun):
 
                     logging.debug("newsummary: [%s]" % newsummary)
                     logging.debug("newlocation: [%s]" % newlocation)
-        
+
                     ## parse categories for known substrings
                     newsummary, newlocation = \
                         parse_categories_for_known_tags(currentsummary, currentcategories, newsummary, newlocation)
 
                     logging.debug("newsummary: [%s]" % newsummary)
                     logging.debug("newlocation: [%s]" % newlocation)
-        
+
                     output.write(newentry)  ## entry so far without description, location, or end
-        
+
                     ## write description:
                     if newsummary:
                         output.write('SUMMARY: ' + newsummary + '\n')
                     else:
                         output.write('SUMMARY: ' + DEFAULT_SUMMARY + '\n')
-        
+
                     ## if found, write location:
                     if newlocation:
                         output.write('LOCATION: ' + newlocation + '\n')
-        
+
                     ## write end of iCalendar entry
                     output.write(line + '\n')
-        
+
                     ## reset entries:
                     currentsummary = ""
-                    currentdescription = ""
                     currentcategories = ""
-                    currentlocation = ""
                     newentry = ""
-                    not_sure = False
-        
+
             elif line.startswith('END:VCALENDAR'):
                     output.write(line + '\n')
-        
+
             if parsing_header:
                 newline = line
-        
+
             if newline and not dryrun:
                 #output.write(newline + '\n')
                 newentry += newline + '\n'
 
         return count_events
-    
 
 
 def main():
     """Main function"""
 
     if options.version:
-        print os.path.basename(sys.argv[0]) + " version "+PROG_VERSION_NUMBER+" from "+PROG_VERSION_DATE
+        print os.path.basename(sys.argv[0]) + " version " + PROG_VERSION_NUMBER + " from " + PROG_VERSION_DATE
         sys.exit(0)
 
     handle_logging()
@@ -314,28 +305,28 @@ def main():
         dryrun = True
 
     if not options.inputfilename and not options.outputfilename:
-        error_exit(1,"Please give me an input file to parse \"--input\" and an output file to generate \"--output\".")
+        error_exit(1, "Please give me an input file to parse \"--input\" and an output file to generate \"--output\".")
 
     if not options.inputfilename and options.outputfilename:
-        error_exit(2,"Please give me an input file to parse \"--input\".")
+        error_exit(2, "Please give me an input file to parse \"--input\".")
 
     if options.inputfilename and not options.outputfilename:
-        error_exit(3,"Please give me an output file to generate \"--output\".")
+        error_exit(3, "Please give me an output file to generate \"--output\".")
 
     logging.debug("dryrun: " + str(dryrun))
 
     ## make sure that outputfilename does not exist or handle situation:
     ## FIXXME: handle situation when outputfilename is a folder (and not a file)
     if os.path.exists(options.outputfilename):
-       if options.overwrite:
-           logging.debug("deleting old output file because of overwrite parameter")
-           if not dryrun:
-               os.remove(options.outputfilename)
-           else:
-               logging.debug("dryrun: I would delete the file \"%s\" now." % options.outputfilename)
-       else:
-           error_exit(4, "Sorry, output file \"%s\" already exists and you did not use the overwrite option \"--overwrite\"." % options.outputfilename)
-           
+        if options.overwrite:
+            logging.debug("deleting old output file because of overwrite parameter")
+            if not dryrun:
+                os.remove(options.outputfilename)
+            else:
+                logging.debug("dryrun: I would delete the file \"%s\" now." % options.outputfilename)
+        else:
+            error_exit(4, "Sorry, output file \"%s\" already exists and you did not use the overwrite option \"--overwrite\"." % options.outputfilename)
+
     count_events = handle_file(options.inputfilename, options.outputfilename, dryrun)
 
     logging.info("successfully finished converting %s events." % count_events)
@@ -349,5 +340,5 @@ if __name__ == "__main__":
         logging.info("Received KeyboardInterrupt")
 
 ## END OF FILE #################################################################
-          
+
 #end
