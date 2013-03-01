@@ -1,4 +1,4 @@
-## Time-stamp: <2013-02-01 12:50:16 vk>
+## Time-stamp: <2013-03-01 14:02:09 vk>
 ## -*- coding: utf-8 -*-
 ## This file is best viewed with GNU Emacs Org-mode: http://orgmode.org/
 
@@ -13,6 +13,10 @@ out *everything* except:
 Please refer to the Features section below for details.
 
 Source: https://github.com/novoid/convert_iCal_to_free-busy-only
+
+- *target group*: Privacy-concerned users of [[http://orgmode.org][Org-mode]] who want to
+  publish their free/busy list online
+- *skills necessary*: invoking a Python script (command line)
 
 ** Why
 
