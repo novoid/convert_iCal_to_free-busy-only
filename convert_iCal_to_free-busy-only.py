@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Time-stamp: <2013-05-21 11:54:21 vk>
 
@@ -6,6 +6,8 @@
 ## TODO:
 ## * fix parts marked with «FIXXME»
 
+from __future__ import absolute_import
+from __future__ import print_function
 DEFAULT_SUMMARY = 'busy'              ## in case no special tag is found
 
 ## this list is case sensitive:
@@ -294,7 +296,7 @@ def main():
     """Main function"""
 
     if options.version:
-        print os.path.basename(sys.argv[0]) + " version " + PROG_VERSION_NUMBER + " from " + PROG_VERSION_DATE
+        print(os.path.basename(sys.argv[0]) + " version " + PROG_VERSION_NUMBER + " from " + PROG_VERSION_DATE)
         sys.exit(0)
 
     handle_logging()
